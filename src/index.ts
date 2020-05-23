@@ -27,10 +27,15 @@ const nameRegex = /^\▶.*\◀$/;
 client.on("guildMemberUpdate", (u, nu) => {
     const name = nu.nickname ? nu.nickname : nu.user?.username!;
 
-    if (nu.roles.cache.some((r) => r.name.endsWith("GODS BLOOD")) && !nameRegex.test(name)) {
-        console.log(`Setting ${name}'s nick`);
+    if (nu.roles.cache.some((r) => r.name.endsWith("GODS BLOOD"))) {
+        if (!nameRegex.test(name)) {
+            console.log(`Setting ${name}'s nick`);
 
-        nu.setNickname(`▶${name}◀`);
+            nu.setNickname(`▶${name}◀`);
+        }
+    } else if (nameRegex.test(name)) {
+        const nn = name.replace(/[▶◀]/g, "");
+        nu.setNickname(nn);
     }
 });
 

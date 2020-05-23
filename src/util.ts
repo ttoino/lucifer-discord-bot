@@ -5,3 +5,7 @@ export async function connectToVoice(message: Message) {
         return await message.member.voice.channel.join();
     }
 }
+
+export async function like(message: Message) {
+    return await message.react("👍");
+}
