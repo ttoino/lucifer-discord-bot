@@ -11,14 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
-    "@types/node": "^14.0.4",
+    "@types/node": "^14.0.14",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
-    "ffmpeg-static": "^4.2.2",
+    "ffmpeg-static": "^4.2.4",
     "nodemon": "^2.0.4",
-    "ts-node": "^8.10.1",
-    "typescript": "^3.9.3",
-    "ytdl-core-discord": "^1.2.0"
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5",
+    "ytdl-core-discord": "^1.2.1"
   },
   "engines": {
     "node": "12.x"
