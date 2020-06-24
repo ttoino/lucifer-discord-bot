@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import Discord from "discord.js";
 import commands from "./commands";
 
@@ -11,7 +14,7 @@ client.on("message", (message) => {
     const m = message.content;
     const u = message.author;
     
-    if (!m.startsWith("!") || u.bot) return;
+    if (!m.startsWith(process.env.BOT_PREFIX || "!") || u.bot) return;
     
     const args = m.slice(1).split(" ");
 
@@ -50,4 +53,4 @@ client.on("guildMemberAdd", u => {
     }
 });
 
-client.login("NzEyNzgyOTE3NDAyNjI0MDgw.XsWsKg.DLVGtFmZroNdIjjvFRcrQi3WCYQ");
+client.login(process.env.BOT_TOKEN);
