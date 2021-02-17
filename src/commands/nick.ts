@@ -10,7 +10,7 @@ const nick: Command = {
         } catch (e) {
             console.log(e);
         }
-    }
-}
+    },
+};
 
 export default nick;

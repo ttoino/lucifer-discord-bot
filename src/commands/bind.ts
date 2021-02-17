@@ -6,12 +6,14 @@ const bind: Command = {
     description: "Sons",
     call: async (message, ...args) => {
         try {
-            (await connectToVoice(message))?.play(`sonszinhos/${args.join(" ")}.mp3`);
+            (await connectToVoice(message))?.play(
+                `sonszinhos/${args.join(" ")}.mp3`
+            );
             like(message);
         } catch (e) {
             console.log(e);
         }
-    }
+    },
 };
 
 export default bind;

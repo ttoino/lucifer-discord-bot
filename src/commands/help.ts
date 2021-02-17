@@ -1,5 +1,5 @@
-import Command from "../Command";
 import { Message, MessageEmbed } from "discord.js";
+import Command from "../Command";
 import commands from "../commands";
 
 const embed: MessageEmbed = new MessageEmbed()
@@ -16,7 +16,7 @@ const help: Command = {
             first = false;
 
             let d = "";
-    
+
             for (const key in commands) {
                 const command = commands[key];
 
@@ -27,7 +27,7 @@ const help: Command = {
         }
 
         message.channel.send(embed);
-    }
-}
+    },
+};
 
 export default help;

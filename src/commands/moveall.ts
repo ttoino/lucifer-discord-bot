@@ -1,5 +1,5 @@
 import Command from "../Command";
-import { like, isLikeReaction } from "../util";
+import { isLikeReaction, like } from "../util";
 
 const moveall: Command = {
     name: "moveall",
@@ -13,22 +13,28 @@ const moveall: Command = {
         const channel = message.member?.voice.channel;
 
         if (!channel) {
-            await message.channel.send("Precisas de estar num canal de voz :imp:");
+            await message.channel.send(
+                "Precisas de estar num canal de voz :imp:"
+            );
             return;
         } else {
-            const botMessage = await message.channel.send(`Clica no :thumbsup: para mover todos os utilizadores em **${channel}**`);
+            const botMessage = await message.channel.send(
+                `Clica no :thumbsup: para mover todos os utilizadores em **${channel}**`
+            );
             await like(botMessage);
 
             try {
                 await botMessage.awaitReactions(
-                    (reaction, user) => isLikeReaction(reaction) && user.id === message.author.id,
+                    (reaction, user) =>
+                        isLikeReaction(reaction) &&
+                        user.id === message.author.id,
                     {
                         max: 1,
                         time: 60000,
-                        errors: ["time"]
+                        errors: ["time"],
                     }
                 );
-                
+
                 const newMember = await message.member.fetch();
                 const newChannel = newMember.voice.channel;
                 const members = channel.members;
@@ -40,16 +46,18 @@ const moveall: Command = {
 
                 members.forEach((m) => {
                     m.voice.setChannel(newChannel);
-                })
+                });
 
-                botMessage.edit(`Os ${members.size} utilizadores em **${channel}** foram movidos para **${newChannel}** :smiling_imp:`);
+                botMessage.edit(
+                    `Os ${members.size} utilizadores em **${channel}** foram movidos para **${newChannel}** :smiling_imp:`
+                );
             } catch (e) {
                 botMessage.edit(`Não foste rápido o suficiente :imp:`);
             } finally {
                 await botMessage.reactions.removeAll();
             }
         }
-    }
-}
+    },
+};
 
 export default moveall;
