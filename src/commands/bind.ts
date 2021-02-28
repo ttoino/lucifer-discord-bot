@@ -1,5 +1,6 @@
 import Command from "../Command";
-import { connectToVoice, like } from "../util";
+import { like } from "../constants";
+import { connectToVoice } from "../util";
 
 const bind: Command = {
     name: "bind",
@@ -9,7 +10,7 @@ const bind: Command = {
             (await connectToVoice(message))?.play(
                 `sonszinhos/${args.join(" ")}.mp3`
             );
-            like(message);
+            message.react(like);
         } catch (e) {
             console.log(e);
         }

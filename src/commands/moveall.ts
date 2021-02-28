@@ -1,5 +1,6 @@
 import Command from "../Command";
-import { isLikeReaction, like } from "../util";
+import { like } from "../constants";
+import { compareReactionEmoji } from "../util";
 
 const moveall: Command = {
     name: "moveall",
@@ -21,12 +22,12 @@ const moveall: Command = {
             const botMessage = await message.channel.send(
                 `Clica no :thumbsup: para mover todos os utilizadores em **${channel}**`
             );
-            await like(botMessage);
+            await botMessage.react(like);
 
             try {
                 await botMessage.awaitReactions(
                     (reaction, user) =>
-                        isLikeReaction(reaction) &&
+                        compareReactionEmoji(reaction, like) &&
                         user.id === message.author.id,
                     {
                         max: 1,

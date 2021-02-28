@@ -6,18 +6,10 @@ export async function connectToVoice(message: Message) {
     }
 }
 
-export async function like(message: Message) {
-    return await message.react("👍");
-}
-
-export function isLikeReaction(reaction: MessageReaction) {
-    return reaction.emoji.name == "👍";
-}
-
-export async function dislike(message: Message) {
-    return await message.react("👎");
-}
-
-export function isDislikeReaction(reaction: MessageReaction) {
-    return reaction.emoji.name == "👎";
+export function compareReactionEmoji(
+    reaction: MessageReaction,
+    emoji: string | string[]
+) {
+    if (typeof emoji == "string") return reaction.emoji.name == emoji;
+    return emoji.includes(reaction.emoji.name);
 }
