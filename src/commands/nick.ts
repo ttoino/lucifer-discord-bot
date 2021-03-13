@@ -6,10 +6,10 @@ const nick: Command = {
     description: "Muda o teu nickname",
     call: async (message, ...args) => {
         try {
-            const n = await message.member?.setNickname(args.join(" "));
+            await message.member?.setNickname(args.join(" "));
             message.react(like);
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     },
 };
