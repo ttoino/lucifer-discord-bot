@@ -16,8 +16,12 @@ export const dislike = "👎";
 export const playPause = "⏯";
 export const play = "▶";
 export const pause = "⏸";
-export const previous = "⏮";
-export const next = "⏭";
+export const previousSong = "⏮";
+export const nextSong = "⏭";
 export const loop = "🔁";
 export const shuffle = "🔀";
 export const stop = "⏹";
+export const previousPage = "◀";
+export const nextPage = "▶";
+
+export const songsPerPage = 10;

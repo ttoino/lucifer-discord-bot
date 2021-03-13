@@ -21,9 +21,8 @@ client.once("ready", () => {
 
 client.on("message", (message) => {
     const m = message.content;
-    const u = message.author;
 
-    if (u.bot) return;
+    if (message.author.bot) return;
     if (isMusicChannel(message.channel)) return onMusicChannelMessage(message);
     if (!m.startsWith(process.env.BOT_PREFIX || "!")) return;
 

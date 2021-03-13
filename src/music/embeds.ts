@@ -1,6 +1,7 @@
 import { Queue, Track } from "discord-player";
 import { MessageEmbed } from "discord.js";
-import { loop, numberEmoji, pause, play } from "../constants";
+import { loop, numberEmoji, pause, play, songsPerPage } from "../constants";
+import { queuePages } from "../util";
 
 export function baseEmbed() {
     return new MessageEmbed().setColor("#F03A17");
@@ -41,13 +42,16 @@ export function emptyQueueEmbed(): MessageEmbed {
     return baseEmbed().setTitle("Fila vazia");
 }
 
-export function notEmptyQueueEmbed(queue: Queue): MessageEmbed {
-    const tracks = queue.tracks.slice(1);
+export function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
+    let tracks = queue.tracks.slice(1);
+    const length = tracks.length;
+    tracks = tracks.slice(page * songsPerPage, (page + 1) * songsPerPage);
+    const pages = queuePages(queue);
 
     return baseEmbed()
         .setTitle(
-            `${queue.loopMode ? loop + " " : ""}Fila — ${tracks.length} música${
-                tracks.length > 1 ? "s" : ""
+            `${queue.loopMode ? loop + " " : ""}Fila — ${length} música${
+                length > 1 ? "s" : ""
             }`
         )
         .addFields(
@@ -55,11 +59,15 @@ export function notEmptyQueueEmbed(queue: Queue): MessageEmbed {
                 name: t.title,
                 value: `${t.author} — *${t.requestedBy.username}*`,
             }))
-        );
+        )
+        .setFooter(`Página ${page + 1}/${pages}`);
 }
 
-export function queueEmbed(queue: Queue | undefined): MessageEmbed {
+export function queueEmbed(
+    queue: Queue | undefined,
+    page: number
+): MessageEmbed {
     return queue && queue.tracks.length > 1
-        ? notEmptyQueueEmbed(queue)
+        ? notEmptyQueueEmbed(queue, page)
         : emptyQueueEmbed();
 }

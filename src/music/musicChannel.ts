@@ -9,20 +9,23 @@ import {
 } from "discord.js";
 import {
     dislike,
+    loop,
+    nextPage,
+    nextSong,
     numberEmoji,
     playPause,
-    next,
+    previousPage,
     shuffle,
-    loop,
     stop,
 } from "../constants";
-import { compareReactionEmoji } from "../util";
+import { compareReactionEmoji, queuePages } from "../util";
 import { playEmbed, queueEmbed, searchEmbed } from "./embeds";
 import { player } from "./player";
 
 let channel: TextChannel;
 let playingMessage: Message;
 let queueMessage: Message;
+let queuePage = 0;
 
 export async function startMusicChannel(client: Client) {
     channel = client.channels.cache.get(
@@ -38,7 +41,7 @@ export async function startMusicChannel(client: Client) {
 async function sendPlaying(embed: MessageEmbed) {
     playingMessage = await channel.send(embed);
 
-    [playPause, stop, loop, next].forEach((e) =>
+    [playPause, stop, loop, nextSong].forEach((e) =>
         playingMessage.react(e).catch(console.error)
     );
     playingMessage
@@ -63,7 +66,7 @@ async function sendPlaying(embed: MessageEmbed) {
                         player.setRepeatMode(playingMessage, !queue.repeatMode);
                         updatePlaying(queue);
                         break;
-                    case next:
+                    case nextSong:
                         player.skip(playingMessage);
                         break;
                 }
@@ -85,21 +88,30 @@ function updatePlaying(queue: Queue | undefined) {
 async function sendQueue(embed: MessageEmbed) {
     queueMessage = await channel.send(embed);
 
-    [loop, shuffle].forEach((e) => queueMessage.react(e).catch(console.error));
+    [loop, shuffle, previousPage, nextPage].forEach((e) =>
+        queueMessage.react(e).catch(console.error)
+    );
     queueMessage
         .createReactionCollector(
             (reaction, user) => user != queueMessage.author
         )
         .on("collect", (reaction, user) => {
             try {
+                const queue = player.getQueue(queueMessage);
                 switch (reaction.emoji.name) {
                     case shuffle:
                         updateQueue(player.shuffle(queueMessage));
                         break;
                     case loop:
-                        const queue = player.getQueue(queueMessage);
                         player.setLoopMode(playingMessage, !queue.loopMode);
                         updateQueue(queue);
+                        break;
+                    case previousPage:
+                        if (queuePage > 0) updateQueue(queue, --queuePage);
+                        break;
+                    case nextPage:
+                        if (queuePage < queuePages(queue) - 1)
+                            updateQueue(queue, ++queuePage);
                         break;
                 }
             } catch (e) {
@@ -110,8 +122,9 @@ async function sendQueue(embed: MessageEmbed) {
         });
 }
 
-async function updateQueue(queue: Queue | undefined) {
-    const qe = queueEmbed(queue);
+async function updateQueue(queue: Queue | undefined, page = 0) {
+    queuePage = page;
+    const qe = queueEmbed(queue, page);
 
     if (queueMessage && !queueMessage.deleted) queueMessage.edit(qe);
     else sendQueue(qe);
@@ -168,7 +181,8 @@ export function onPlaylistAdd(
     updateQueue(queue);
 }
 
-export function onQueueCreate(message: Message, queue: Queue) {
+export async function onQueueCreate(message: Message, queue: Queue) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
     console.log(`Queue with ${queue.tracks.length} tracks created`);
     updateQueue(queue);
 }
@@ -209,7 +223,7 @@ export async function onSearchResults(
             });
         }
     } catch (e) {
-        console.error("habhjkd", e);
+        console.error(e);
     } finally {
         m.delete();
     }
