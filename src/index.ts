@@ -33,7 +33,16 @@ client.on("message", (message) => {
 
     const command = args.shift()?.toLowerCase();
 
-    if (command) commands[command]?.call(message, ...args);
+    if (command) {
+        const c = commands[command];
+        if (c) {
+            if (c.admin && !message.member?.hasPermission("ADMINISTRATOR")) {
+                message.channel.send("Não és digno :imp:");
+                return;
+            }
+            c.call(message, ...args);
+        }
+    }
 });
 
 const nameRegex = /^\▶.*\◀$/;

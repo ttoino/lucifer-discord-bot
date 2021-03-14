@@ -24,6 +24,8 @@ export const stop = "⏹";
 export const previousPage = "◀";
 export const nextPage = "▶";
 
+export const botColor = "#F03A17";
+
 export const songsPerPage = 10;
 
 export const botPrefix = process.env.BOT_PREFIX || "!";

@@ -1,10 +1,17 @@
 import { Queue, Track } from "discord-player";
 import { MessageEmbed } from "discord.js";
-import { loop, numberEmoji, pause, play, songsPerPage } from "../constants";
+import {
+    botColor,
+    loop,
+    numberEmoji,
+    pause,
+    play,
+    songsPerPage,
+} from "../constants";
 import { queuePages } from "../util";
 
 export function baseEmbed() {
-    return new MessageEmbed().setColor("#F03A17");
+    return new MessageEmbed().setColor(botColor);
 }
 
 export function searchEmbed(tracks: Track[]) {

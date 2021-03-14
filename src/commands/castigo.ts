@@ -2,13 +2,9 @@ import Command from "../Command";
 
 const castigo: Command = {
     name: "castigo",
-    description: "CASTIGO CRL",
+    description: "Envia um gajo para o castigo",
+    admin: true,
     call: async (message, ...args) => {
-        if (!message.member?.hasPermission("ADMINISTRATOR")) {
-            message.channel.send("Não és digno :imp:");
-            return;
-        }
-
         const m = message.mentions.members?.first();
         const role = message.guild?.roles.cache.find((r) =>
             r.name.endsWith("TESTÍCULO DO GOD")
