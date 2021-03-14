@@ -25,3 +25,5 @@ export const previousPage = "◀";
 export const nextPage = "▶";
 
 export const songsPerPage = 10;
+
+export const botPrefix = process.env.BOT_PREFIX || "!";

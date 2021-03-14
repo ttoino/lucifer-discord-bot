@@ -9,6 +9,7 @@ import {
     onMusicChannelMessage,
     startMusicChannel,
 } from "./music/musicChannel";
+import { botPrefix } from "./constants";
 
 export const client = new Discord.Client();
 initPlayer(client);
@@ -24,9 +25,9 @@ client.on("message", (message) => {
 
     if (message.author.bot) return;
     if (isMusicChannel(message.channel)) return onMusicChannelMessage(message);
-    if (!m.startsWith(process.env.BOT_PREFIX || "!")) return;
+    if (!m.startsWith(botPrefix)) return;
 
-    const args = m.slice((process.env.BOT_PREFIX || "!").length).split(/\s+/);
+    const args = m.slice(botPrefix.length).split(/\s+/);
 
     console.log(args);
 
@@ -37,7 +38,7 @@ client.on("message", (message) => {
 
 const nameRegex = /^\▶.*\◀$/;
 client.on("guildMemberUpdate", (u, nu) => {
-    const name = nu.nickname ? nu.nickname : nu.user?.username!;
+    const name = nu.nickname || nu.user?.username;
 
     if (nu.roles.cache.some((r) => r.name.endsWith("GODS BLOOD"))) {
         if (!nameRegex.test(name)) {
