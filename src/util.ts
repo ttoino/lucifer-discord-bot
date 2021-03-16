@@ -1,12 +1,6 @@
 import { Queue } from "discord-player";
-import { Message, MessageReaction } from "discord.js";
+import { MessageReaction } from "discord.js";
 import { songsPerPage } from "./constants";
-
-export async function connectToVoice(message: Message) {
-    if (message.member?.voice.channel) {
-        return await message.member.voice.channel.join();
-    }
-}
 
 export function compareReactionEmoji(
     reaction: MessageReaction,
