@@ -7,45 +7,58 @@ import {
     onPlaylistAdd,
     onQueueCreate,
     onQueueEnd,
+    onBotDisconnect,
 } from "./musicChannel";
 
 export let player: Player;
 
 export function initPlayer(client: Client) {
-    player = new Player(client);
-
-    player
+    player = new Player(client)
+        // Every time a track starts
         .on("trackStart", onTrackStart)
+        // When a single track is added
         .on("trackAdd", onTrackAdd)
+        // When a playlist is added
         .on("playlistAdd", onPlaylistAdd)
+        // These don't matter
         .on("playlistParseStart", (x, m) => {
             console.log("Playlist parse started");
         })
         .on("playlistParseEnd", (x, m) => {
             console.log("Playlist parse ended");
         })
+        // When the first track is added
         .on("queueCreate", onQueueCreate)
+        // When queued music stops
         .on("queueEnd", onQueueEnd)
-        .on("botDisconnect", (m) => {
-            console.warn("Bot disconnected");
-        })
+        // When disconnected by someone
+        .on("botDisconnect", onBotDisconnect)
+        // Doesn't seem to trigger 🤷‍♂️
         .on("channelEmpty", (m) => {
             console.warn("Channel empty");
         })
+        // When search results come back
+        // ⬇ Need this because the types don't match the api
         // @ts-ignore
         .on("searchResults", onSearchResults)
+        // When someone takes too long to reply to a search
+        // Should never trigger because we override the default search system
         .on("searchCancel", (m, s, t) => {
             console.warn("Search cancelled");
         })
+        // Same here
         .on("searchInvalidResponse", (m, s, t, ss, mc) => {
             console.error("Search invalid response");
         })
+        // General errors, ignoring for now
         .on("error", (e, m) => {
             console.error(e);
         })
+        // No search results, also ignored for now
         .on("noResults", (m, s) => {
             console.error("No results");
         })
+        // Doesn't seem to trigger 🤷‍♂️
         .on("musicStop", () => {
             console.log("Music stopped");
         });

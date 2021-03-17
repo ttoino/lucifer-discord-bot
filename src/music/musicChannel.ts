@@ -22,7 +22,7 @@ import { compareReactionEmoji, queuePages } from "../util";
 import { playEmbed, queueEmbed, searchEmbed } from "./embeds";
 import { player } from "./player";
 
-let channel: TextChannel;
+export let channel: TextChannel;
 let playingMessage: Message;
 let queueMessage: Message;
 let queuePage = 0;
@@ -182,6 +182,7 @@ export function onPlaylistAdd(
 }
 
 export async function onQueueCreate(message: Message, queue: Queue) {
+    // Need this because this event is sent before the queue actually gets populated
     await new Promise((resolve) => setTimeout(resolve, 50));
     console.log(`Queue with ${queue.tracks.length} tracks created`);
     updateQueue(queue);
@@ -227,4 +228,9 @@ export async function onSearchResults(
     } finally {
         m.delete();
     }
+}
+
+export async function onBotDisconnect(message: Message) {
+    console.warn("Bot disconnected");
+    updateMessages();
 }
