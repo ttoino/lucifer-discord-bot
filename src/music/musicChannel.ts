@@ -142,6 +142,22 @@ export function isMusicChannel(c: Channel) {
     return c == channel;
 }
 
+function removeFromQueue(message: Message, content: string) {
+    const indices: Set<number> = new Set();
+    const queue = player.getQueue(message);
+    content
+        .trim()
+        .split(/[\s,.;:]+/)
+        .forEach((s) => {
+            const n = parseInt(s);
+            if (n > 0 && n < queue?.tracks.length) indices.add(n);
+        });
+    Array.from(indices)
+        .sort((a, b) => b - a)
+        .forEach((n) => player.remove(message, n));
+    updateQueue(queue);
+}
+
 // EVENTS
 export async function onMusicChannelMessage(message: Message) {
     message.delete();
@@ -149,6 +165,9 @@ export async function onMusicChannelMessage(message: Message) {
     const start = message.content[0];
 
     switch (start) {
+        case "-":
+            removeFromQueue(message, message.content.substring(1));
+            break;
         case "?":
             await player.play(message, message.content.substring(1), false);
             break;

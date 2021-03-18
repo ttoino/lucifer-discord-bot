@@ -63,7 +63,7 @@ export function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
         )
         .addFields(
             tracks.map((t) => ({
-                name: t.title,
+                name: `${queue.tracks.indexOf(t)}. ${t.title}`,
                 value: `${t.author} — *${t.requestedBy.username}*`,
             }))
         )
