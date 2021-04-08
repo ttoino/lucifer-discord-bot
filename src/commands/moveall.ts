@@ -2,6 +2,7 @@ import { VoiceState } from "discord.js";
 import { client } from "..";
 import Command from "../Command";
 import { dislike, like } from "../constants";
+import { wait } from "../util";
 
 const moveall: Command = {
     name: "moveall",
@@ -33,7 +34,7 @@ const moveall: Command = {
         };
         client.on("voiceStateUpdate", onVoiceStateUpdate);
 
-        await new Promise((resolve) => setTimeout(resolve, 60000));
+        await wait(60000);
         message.react(dislike);
         client.off("voiceStateUpdate", onVoiceStateUpdate);
     },

@@ -18,14 +18,15 @@ import {
     shuffle,
     stop,
 } from "../constants";
-import { compareReactionEmoji, queuePages } from "../util";
-import { playEmbed, queueEmbed, searchEmbed } from "./embeds";
+import { compareReactionEmoji, queuePages, wait } from "../util";
+import { helpEmbed, playEmbed, queueEmbed, searchEmbed } from "./embeds";
 import { player } from "./player";
 
 export let channel: TextChannel;
 let playingMessage: Message;
 let queueMessage: Message;
 let queuePage = 0;
+let helpMessage: Message;
 
 export async function startMusicChannel(client: Client) {
     channel = client.channels.cache.get(
@@ -34,6 +35,10 @@ export async function startMusicChannel(client: Client) {
 
     const messages = await channel.messages.fetch({ limit: 100 });
     channel.bulkDelete(messages);
+
+    channel.setTopic(
+        "Escreve o nome ou link de uma música para a tocar!\nEscreve um **?** para ver mais opções!"
+    );
 
     updateMessages();
 }
@@ -138,6 +143,14 @@ function updateMessages() {
     updateQueue(queue);
 }
 
+async function sendHelp() {
+    if (!helpMessage || helpMessage.deleted) {
+        helpMessage = await channel.send(helpEmbed);
+
+        helpMessage.delete({ timeout: 60000 });
+    }
+}
+
 export function isMusicChannel(c: Channel) {
     return c == channel;
 }
@@ -163,13 +176,15 @@ export async function onMusicChannelMessage(message: Message) {
     message.delete();
 
     const start = message.content[0];
+    const rest = message.content.substring(1);
 
     switch (start) {
         case "-":
-            removeFromQueue(message, message.content.substring(1));
+            removeFromQueue(message, rest);
             break;
         case "?":
-            await player.play(message, message.content.substring(1), false);
+            if (rest) await player.play(message, rest, false);
+            else sendHelp();
             break;
         default:
             await player.play(message, message.content, true);
@@ -202,7 +217,7 @@ export function onPlaylistAdd(
 
 export async function onQueueCreate(message: Message, queue: Queue) {
     // Need this because this event is sent before the queue actually gets populated
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await wait(50);
     console.log(`Queue with ${queue.tracks.length} tracks created`);
     updateQueue(queue);
 }

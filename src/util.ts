@@ -13,3 +13,7 @@ export function compareReactionEmoji(
 export function queuePages(queue: Queue) {
     return Math.ceil((queue.tracks.length - 1) / songsPerPage);
 }
+
+export function wait(time: number) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}

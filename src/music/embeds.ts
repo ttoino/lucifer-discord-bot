@@ -78,3 +78,16 @@ export function queueEmbed(
         ? notEmptyQueueEmbed(queue, page)
         : emptyQueueEmbed();
 }
+
+export const helpEmbed = baseEmbed()
+    .setTitle("Ajuda")
+    .setDescription(
+        "Escrever o nome de uma música pesquisa no YouTube e toca o primeiro resultado\n" +
+            "Também suporta links do YouTube, Spotify e Soundcloud\n\n" +
+            "Começar a mensagem com alguns símbolos tem efeitos especiais:\n\n" +
+            "**?** — Pesquisa no YouTube e mostra os primeiros 10 resultados\n" +
+            "*?post malone* — Pesquisa `post malone` no YouTube\n\n" +
+            "**-** — Retira as músicas com os índices especificados da fila\n" +
+            "*-1 2,6;8* — Retira as músicas com os índices 1, 2, 6 e 8"
+    )
+    .setFooter("Esta mensagem vai autodestruir-se dentro de 60 segundos");
