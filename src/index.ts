@@ -1,3 +1,4 @@
+// Load environment variables before anything else happens
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -23,16 +24,20 @@ client.once("ready", () => {
 client.on("message", (message) => {
     const m = message.content;
 
+    // Ignore messages by bots
     if (message.author.bot) return;
+
+    // Handle music channel messages
     if (isMusicChannel(message.channel)) return onMusicChannelMessage(message);
+
+    // Ignore messages that are not commands
     if (!m.startsWith(botPrefix)) return;
 
+    // Separate message into command and arguments
     const args = m.slice(botPrefix.length).split(/\s+/);
-
-    console.log(args);
-
     const command = args.shift()?.toLowerCase();
 
+    // Call command
     if (command) {
         const c = commands[command];
         if (c) {
