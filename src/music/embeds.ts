@@ -23,7 +23,7 @@ export function searchEmbed(tracks: Track[]) {
     return baseEmbed().setTitle("Pesquisa").setDescription(desc);
 }
 
-export function playingEmbed(queue: Queue): MessageEmbed {
+function playingEmbed(queue: Queue): MessageEmbed {
     const track = queue.playing;
 
     return baseEmbed()
@@ -37,19 +37,15 @@ export function playingEmbed(queue: Queue): MessageEmbed {
         .setImage(track.thumbnail);
 }
 
-export function notPlayingEmbed(): MessageEmbed {
-    return baseEmbed().setTitle("Sem música a tocar");
-}
+const notPlayingEmbed = baseEmbed().setTitle("Sem música a tocar");
 
 export function playEmbed(queue: Queue | undefined): MessageEmbed {
-    return queue ? playingEmbed(queue) : notPlayingEmbed();
+    return queue ? playingEmbed(queue) : notPlayingEmbed;
 }
 
-export function emptyQueueEmbed(): MessageEmbed {
-    return baseEmbed().setTitle("Fila vazia");
-}
+const emptyQueueEmbed = baseEmbed().setTitle("Fila vazia");
 
-export function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
+function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
     let tracks = queue.tracks.slice(1);
     const length = tracks.length;
     tracks = tracks.slice(page * songsPerPage, (page + 1) * songsPerPage);
@@ -76,7 +72,7 @@ export function queueEmbed(
 ): MessageEmbed {
     return queue && queue.tracks.length > 1
         ? notEmptyQueueEmbed(queue, page)
-        : emptyQueueEmbed();
+        : emptyQueueEmbed;
 }
 
 export const helpEmbed = baseEmbed()
