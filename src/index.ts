@@ -19,6 +19,14 @@ client.once("ready", () => {
     console.log("Ready!");
 
     startMusicChannel(client);
+
+    client.user?.setPresence({
+        status: "online",
+        activity: {
+            name: botPrefix + "help",
+            type: "PLAYING",
+        },
+    });
 });
 
 client.on("message", (message) => {
