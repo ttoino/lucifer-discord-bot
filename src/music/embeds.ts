@@ -47,7 +47,7 @@ function playingEmbed(queue: Queue): MessageEmbed {
         .setTitle(
             `${queue.paused ? pause : play}${
                 queue.repeatMode ? " " + loop : ""
-            } ${track.title}`
+            } ${track.title} — ${track.duration}`
         )
         .setURL(track.url)
         .setDescription(`${track.author} — *${track.requestedBy.username}*`)
@@ -83,6 +83,7 @@ const emptyQueueEmbed = baseEmbed().setTitle("Fila vazia");
  */
 function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
     let tracks = queue.tracks.slice(1);
+    const duration = tracks.reduce((d, t) => d + t.durationMS, 0) / 1000;
     const length = tracks.length;
     tracks = tracks.slice(page * songsPerPage, (page + 1) * songsPerPage);
     const pages = queuePages(queue);
@@ -91,11 +92,13 @@ function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
         .setTitle(
             `${queue.loopMode ? loop + " " : ""}Fila — ${length} música${
                 length > 1 ? "s" : ""
-            }`
+            } — ${
+                duration > 3600 ? Math.floor(duration / 3600) + ":" : ""
+            }${Math.floor((duration % 3600) / 60)}:${Math.floor(duration % 60)}`
         )
         .addFields(
             tracks.map((t) => ({
-                name: `${queue.tracks.indexOf(t)}. ${t.title}`,
+                name: `${queue.tracks.indexOf(t)}. ${t.title} — ${t.duration}`,
                 value: `${t.author} — *${t.requestedBy.username}*`,
             }))
         )
