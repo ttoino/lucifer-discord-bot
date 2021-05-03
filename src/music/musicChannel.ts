@@ -409,3 +409,13 @@ export async function onBotDisconnect(message: Message) {
     console.warn("Bot disconnected");
     updateMessages();
 }
+
+/**
+ * Handles a channelEmpty event.
+ *
+ * @param message The message
+ */
+export async function onChannelEmpty(message: Message) {
+    console.warn("Channel empty");
+    updateMessages();
+}

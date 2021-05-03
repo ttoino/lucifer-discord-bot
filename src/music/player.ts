@@ -8,6 +8,7 @@ import {
     onQueueCreate,
     onQueueEnd,
     onBotDisconnect,
+    onChannelEmpty,
 } from "./musicChannel";
 
 export let player: Player;
@@ -33,10 +34,9 @@ export function initPlayer(client: Client) {
         .on("queueEnd", onQueueEnd)
         // When disconnected by someone
         .on("botDisconnect", onBotDisconnect)
-        // Doesn't seem to trigger 🤷‍♂️
-        .on("channelEmpty", (m) => {
-            console.warn("Channel empty");
-        })
+        // Triggers when the bot is left alone in a voice channel
+        // Seems inconsistent
+        .on("channelEmpty", onChannelEmpty)
         // When search results come back
         // ⬇ Need this because the types don't match the api
         // @ts-ignore
