@@ -3,7 +3,7 @@ import { MessageReaction } from "discord.js";
 import { songsPerPage } from "./constants";
 
 /**
- * Cheks if a reaction's emoji is the same as another emoji or is in a list of emoji.
+ * Checks if a reaction's emoji is the same as another emoji or is in a list of emoji.
  *
  * @param reaction The reaction to the message
  * @param emoji The emoji
@@ -28,7 +28,7 @@ export function queuePages(queue: Queue) {
 }
 
 /**
- * Convinience method to wait some ammount of time in async functions.
+ * Convenience method to wait some amount of time in async functions.
  *
  * @example <caption>Waits for 10 seconds</caption>
  * await wait(10000);
