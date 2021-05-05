@@ -8,7 +8,7 @@ import {
     play,
     songsPerPage,
 } from "../constants";
-import { queuePages } from "../util";
+import { formatTime, queuePages } from "../util";
 
 /**
  * Creates a base embed every other embed extends. Right now it just changes the color to red.
@@ -92,9 +92,7 @@ function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
         .setTitle(
             `${queue.loopMode ? loop + " " : ""}Fila — ${length} música${
                 length > 1 ? "s" : ""
-            } — ${
-                duration > 3600 ? Math.floor(duration / 3600) + ":" : ""
-            }${Math.floor((duration % 3600) / 60)}:${Math.floor(duration % 60)}`
+            } — ${formatTime(duration)}`
         )
         .addFields(
             tracks.map((t) => ({

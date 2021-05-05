@@ -39,3 +39,37 @@ export function queuePages(queue: Queue) {
 export function wait(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+/**
+ * Formats time to be in the format hours:minutes:seconds.
+ * Each part is omitted automatically or padded with a leading zero if necessary.
+ *
+ * @param time The time in seconds
+ * @returns The formatted time
+ */
+export function formatTime(time: number) {
+    const hours = time > 3600 ? Math.floor(time / 3600) : "";
+    const minutes = time > 60 ? Math.floor((time % 3600) / 60) : "";
+    const seconds = Math.floor(time % 60);
+
+    return (
+        hours +
+        (hours && minutes ? ":" + minutes.pad(2) : minutes.toString()) +
+        (minutes ? ":" + seconds.pad(2) : seconds)
+    );
+}
+
+declare global {
+    interface Number {
+        /**
+         * Pads out a number so it has leading zeros
+         *
+         * @param length Length of the resulting string
+         */
+        pad(length: number): string;
+    }
+}
+
+Number.prototype.pad = function (length) {
+    return this.toString().padStart(length, "0");
+};
