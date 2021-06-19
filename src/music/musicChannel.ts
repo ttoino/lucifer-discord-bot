@@ -1,4 +1,4 @@
-import { Playlist, Queue, Track } from "discord-player";
+import { Queue, Track } from "discord-player";
 import {
     Channel,
     Client,
@@ -314,7 +314,7 @@ export function onTrackAdd(message: Message, queue: Queue, track: Track) {
 export function onPlaylistAdd(
     message: Message,
     queue: Queue,
-    playlist: Playlist
+    playlist: { tracks: Track[] }
 ) {
     console.log(
         `Playlist with ${playlist.tracks.length} tracks added (queue size: ${queue.tracks.length})`
