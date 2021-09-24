@@ -28,7 +28,7 @@ const moveall: Command = {
 
             const members = channel.members;
 
-            members.forEach((m) => m.voice.setChannel(newChannel));
+            members.forEach((m) => m.voice.setChannel(newChannel.id));
             message.react(like);
             client.off("voiceStateUpdate", onVoiceStateUpdate);
         };

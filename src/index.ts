@@ -2,7 +2,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import Discord from "discord.js";
+import { Client, Intents } from "discord.js";
 import commands from "./commands";
 import { initPlayer } from "./music/player";
 import {
@@ -12,7 +12,15 @@ import {
 } from "./music/musicChannel";
 import { botPrefix } from "./constants";
 
-export const client = new Discord.Client();
+export const client = new Client({
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+    ],
+});
 initPlayer(client);
 
 client.once("ready", () => {
@@ -22,14 +30,16 @@ client.once("ready", () => {
 
     client.user?.setPresence({
         status: "online",
-        activity: {
-            name: botPrefix + "help",
-            type: "PLAYING",
-        },
+        activities: [
+            {
+                name: botPrefix + "help",
+                type: "PLAYING",
+            },
+        ],
     });
 });
 
-client.on("message", (message) => {
+client.on("messageCreate", (message) => {
     const m = message.content;
 
     // Ignore messages by bots
@@ -49,7 +59,7 @@ client.on("message", (message) => {
     if (command) {
         const c = commands[command];
         if (c) {
-            if (c.admin && !message.member?.hasPermission("ADMINISTRATOR")) {
+            if (c.admin && !message.member?.permissions.has("ADMINISTRATOR")) {
                 message.channel.send("Não és digno :imp:");
                 return;
             }

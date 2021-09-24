@@ -13,7 +13,8 @@ export function compareReactionEmoji(
     reaction: MessageReaction,
     emoji: string | string[]
 ) {
-    if (typeof emoji == "string") return reaction.emoji.name == emoji;
+    if (!reaction.emoji.name) return false;
+    else if (typeof emoji == "string") return reaction.emoji.name == emoji;
     return emoji.includes(reaction.emoji.name);
 }
 
@@ -24,7 +25,7 @@ export function compareReactionEmoji(
  * @returns The number of pages
  */
 export function queuePages(queue: Queue) {
-    return Math.ceil((queue.tracks.length - 1) / songsPerPage);
+    return Math.ceil(queue.tracks.length / songsPerPage);
 }
 
 /**

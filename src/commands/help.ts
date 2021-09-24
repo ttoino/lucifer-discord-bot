@@ -33,9 +33,9 @@ const help: Command = {
             adminEmbed.setDescription(ad);
         }
 
-        if (message.member?.hasPermission("ADMINISTRATOR"))
-            message.channel.send(adminEmbed);
-        else message.channel.send(embed);
+        if (message.member?.permissions.has("ADMINISTRATOR"))
+            message.channel.send({ embeds: [adminEmbed] });
+        else message.channel.send({ embeds: [embed] });
     },
 };
 

@@ -1,4 +1,4 @@
-import { Queue, Track } from "discord-player";
+import { Queue, QueueRepeatMode, Track } from "discord-player";
 import { MessageEmbed } from "discord.js";
 import {
     botColor,
@@ -41,12 +41,12 @@ export function searchEmbed(tracks: Track[]) {
  * @returns The playing embed
  */
 function playingEmbed(queue: Queue): MessageEmbed {
-    const track = queue.playing;
+    const track = queue.current;
 
     return baseEmbed()
         .setTitle(
-            `${queue.paused ? pause : play}${
-                queue.repeatMode ? " " + loop : ""
+            `${queue.connection.paused ? pause : play}${
+                queue.repeatMode == QueueRepeatMode.TRACK ? " " + loop : ""
             } ${track.title} — ${track.duration}`
         )
         .setURL(track.url)
@@ -82,7 +82,7 @@ const emptyQueueEmbed = baseEmbed().setTitle("Fila vazia");
  * @returns The queue embed
  */
 function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
-    let tracks = queue.tracks.slice(1);
+    let tracks = queue.tracks;
     const duration = tracks.reduce((d, t) => d + t.durationMS, 0) / 1000;
     const length = tracks.length;
     tracks = tracks.slice(page * songsPerPage, (page + 1) * songsPerPage);
@@ -90,13 +90,15 @@ function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
 
     return baseEmbed()
         .setTitle(
-            `${queue.loopMode ? loop + " " : ""}Fila — ${length} música${
-                length > 1 ? "s" : ""
-            } — ${formatTime(duration)}`
+            `${
+                queue.repeatMode == QueueRepeatMode.QUEUE ? loop + " " : ""
+            }Fila — ${length} música${length > 1 ? "s" : ""} — ${formatTime(
+                duration
+            )}`
         )
         .addFields(
-            tracks.map((t) => ({
-                name: `${queue.tracks.indexOf(t)}. ${t.title} — ${t.duration}`,
+            tracks.map((t, i) => ({
+                name: `${page * 10 + i + 1}. ${t.title} — ${t.duration}`,
                 value: `${t.author} — *${t.requestedBy.username}*`,
             }))
         )
