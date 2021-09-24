@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Client, Intents } from "discord.js";
-import commands from "./commands";
+import { commandMap } from "./commands";
 import { initPlayer } from "./music/player";
 import {
     isMusicChannel,
@@ -40,31 +40,19 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", (message) => {
-    const m = message.content;
+    // const m = message.content;
 
     // Ignore messages by bots
     if (message.author.bot) return;
 
     // Handle music channel messages
     if (isMusicChannel(message.channel)) return onMusicChannelMessage(message);
+});
 
-    // Ignore messages that are not commands
-    if (!m.startsWith(botPrefix)) return;
-
-    // Separate message into command and arguments
-    const args = m.slice(botPrefix.length).split(/\s+/);
-    const command = args.shift()?.toLowerCase();
-
-    // Call command
-    if (command) {
-        const c = commands[command];
-        if (c) {
-            if (c.admin && !message.member?.permissions.has("ADMINISTRATOR")) {
-                message.channel.send("Não és digno :imp:");
-                return;
-            }
-            c.call(message, ...args);
-        }
+// TODO: Admin commands, maybe argument parsing?
+client.on("interactionCreate", (interaction) => {
+    if (interaction.isCommand()) {
+        commandMap.get(interaction.commandName)?.call(interaction);
     }
 });
 
