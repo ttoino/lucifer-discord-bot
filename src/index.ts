@@ -10,7 +10,6 @@ import {
     onMusicChannelMessage,
     startMusicChannel,
 } from "./music/musicChannel";
-import { botPrefix } from "./constants";
 
 export const client = new Client({
     intents: [
@@ -27,16 +26,6 @@ client.once("ready", () => {
     console.log("Ready!");
 
     startMusicChannel(client);
-
-    client.user?.setPresence({
-        status: "online",
-        activities: [
-            {
-                name: botPrefix + "help",
-                type: "PLAYING",
-            },
-        ],
-    });
 });
 
 client.on("messageCreate", (message) => {
