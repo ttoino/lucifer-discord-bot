@@ -13,16 +13,16 @@ export const numberEmoji = [
 
 export const like = "👍";
 export const dislike = "👎";
-export const playPause = "⏯";
-export const play = "▶";
-export const pause = "⏸";
-export const previousSong = "⏮";
-export const nextSong = "⏭";
-export const loop = "🔁";
-export const shuffle = "🔀";
-export const stop = "⏹";
-export const previousPage = "◀";
-export const nextPage = "▶";
+export const play = "<:play:894245328386150511>";
+export const pause = "<:pause:894245327933165619>";
+export const previousSong = "<:skipprevious:894245328423903272>";
+export const nextSong = "<:skipnext:894245328306454568>";
+export const shuffle = "<:shuffle:894245328298070086>";
+export const stop = "<:stop:894245328298049616>";
+export const previousPage = "<:chevronleft:894245328411316254>";
+export const nextPage = "<:chevronright:894245328323219466>";
+export const firstPage = "<:pagefirst:894245327840882719>";
+export const lastPage = "<:pagelast:894245328197414942>";
 
 export const botColor = "#F03A17";
 

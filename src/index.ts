@@ -1,15 +1,13 @@
 // Load environment variables before anything else happens
+import { Channel, Client, Intents, Role } from "discord.js";
 import dotenv from "dotenv";
+import buttons from "./buttons";
+import { OptionsArg } from "./Command";
+import commands from "./commands";
+import { initMusicChannel, initPlayer } from "./music";
+import { onMessageCreate } from "./music/events";
+import selectmenus from "./selectmenus";
 dotenv.config();
-
-import { Client, Intents } from "discord.js";
-import { commandMap } from "./commands";
-import { initPlayer } from "./music/player";
-import {
-    isMusicChannel,
-    onMusicChannelMessage,
-    startMusicChannel,
-} from "./music/musicChannel";
 
 export const client = new Client({
     intents: [
@@ -22,10 +20,11 @@ export const client = new Client({
 });
 initPlayer(client);
 
-client.once("ready", () => {
+client.once("ready", async () => {
     console.log("Ready!");
 
-    startMusicChannel(client);
+    for (const [_, guild] of await client.guilds.fetch())
+        initMusicChannel(await guild.fetch());
 });
 
 client.on("messageCreate", (message) => {
@@ -35,13 +34,56 @@ client.on("messageCreate", (message) => {
     if (message.author.bot) return;
 
     // Handle music channel messages
-    if (isMusicChannel(message.channel)) return onMusicChannelMessage(message);
+    onMessageCreate(message);
 });
 
 // TODO: Admin commands, maybe argument parsing?
 client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
-        commandMap.get(interaction.commandName)?.call(interaction);
+        const command = commands[interaction.commandName];
+
+        if (!command) return;
+
+        let opt, sub;
+
+        if (command.subcommands) {
+            sub = interaction.options.getSubcommand(true);
+            opt = command.subcommands[sub].options;
+        }
+
+        opt ??= command.options;
+
+        if (opt) {
+            const options: OptionsArg<any> = {};
+
+            for (const option in opt) {
+                const { optional } = opt[option];
+
+                const o = interaction.options.get(option, !optional);
+
+                const value =
+                    (o?.channel as Channel | undefined) ??
+                    o?.user ??
+                    (o?.role as Role | undefined) ??
+                    o?.value;
+
+                options[option] = value;
+            }
+
+            if (sub) return command.call(interaction, sub, options);
+
+            return command.call(interaction, options);
+        }
+
+        return command.call(interaction);
+    } else if (interaction.isButton()) {
+        if (interaction.customId in buttons)
+            buttons[interaction.customId](interaction);
+    } else if (interaction.isSelectMenu()) {
+        if (interaction.customId in selectmenus)
+            selectmenus[interaction.customId](interaction);
+    } else if (interaction.isContextMenu()) {
+        interaction;
     }
 });
 

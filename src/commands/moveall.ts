@@ -1,24 +1,20 @@
-import Command from "../Command";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { GuildMember, VoiceChannel } from "discord.js";
+import { admin, CommandWithOptions } from "../Command";
+// import { SlashCommandBuilder } from "@discordjs/builders";
+import { Channel, GuildMember, VoiceChannel } from "discord.js";
 
-const moveall: Command = {
-    builder: new SlashCommandBuilder()
-        .setName("moveall")
-        .setDescription(
-            "Move todos os utilizadores no teu canal para outro canal"
-        )
-        .addChannelOption((option) =>
-            option
-                .setName("canal")
-                .setDescription("O canal para o qual mover")
-                .setRequired(true)
-        ),
-    admin: true,
-    call: async (interaction) => {
-        const newChannel = interaction.options.getChannel("canal");
+const options = {
+    channel: {
+        description: "O canal para o qual mover",
+        type: Channel,
+    },
+} as const;
 
-        if (!(newChannel instanceof VoiceChannel))
+const moveall: CommandWithOptions<typeof options> = {
+    admin,
+    options,
+    description: "Move todos os utilizadores no teu canal para outro canal",
+    call: async (interaction, { channel }) => {
+        if (!(channel instanceof VoiceChannel))
             return interaction.reply({
                 content: "Esse canal não é um canal de voz!",
                 ephemeral: true,
@@ -30,16 +26,16 @@ const moveall: Command = {
                 ephemeral: true,
             });
 
-        const channel = interaction.member.voice.channel;
-        if (!channel)
+        const oldChannel = interaction.member.voice.channel;
+        if (!oldChannel)
             return interaction.reply({
                 content: "Precisas de estar num canal de voz :imp:",
                 ephemeral: true,
             });
 
         try {
-            channel.members.forEach((member) =>
-                member.voice.setChannel(newChannel)
+            oldChannel.members.forEach((member) =>
+                member.voice.setChannel(channel)
             );
             interaction.reply({ content: "Feito!", ephemeral: true });
         } catch (e) {

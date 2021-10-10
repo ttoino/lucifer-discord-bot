@@ -1,14 +1,7 @@
-import { Queue, QueueRepeatMode, Track } from "discord-player";
+import { Queue, Track } from "discord-player";
 import { MessageEmbed } from "discord.js";
-import {
-    botColor,
-    loop,
-    numberEmoji,
-    pause,
-    play,
-    songsPerPage,
-} from "../constants";
-import { formatTime, queuePages } from "../util";
+import { botColor, numberEmoji, songsPerPage } from "../constants";
+import { formatTime, PagedQueue, queuePages } from "../util";
 
 /**
  * Creates a base embed every other embed extends. Right now it just changes the color to red.
@@ -44,11 +37,7 @@ function playingEmbed(queue: Queue): MessageEmbed {
     const track = queue.current;
 
     return baseEmbed()
-        .setTitle(
-            `${queue.connection.paused ? pause : play}${
-                queue.repeatMode == QueueRepeatMode.TRACK ? " " + loop : ""
-            } ${track.title} — ${track.duration}`
-        )
+        .setTitle(`${track.title} — ${track.duration}`)
         .setURL(track.url)
         .setDescription(`${track.author} — *${track.requestedBy.username}*`)
         .setImage(track.thumbnail);
@@ -66,33 +55,26 @@ const notPlayingEmbed = baseEmbed().setTitle("Sem música a tocar");
  * @returns The play embed
  */
 export function playEmbed(queue: Queue | undefined): MessageEmbed {
-    return queue ? playingEmbed(queue) : notPlayingEmbed;
+    return queue?.playing ? playingEmbed(queue) : notPlayingEmbed;
 }
-
-/**
- * The default embed shown when the queue is empty.
- */
-const emptyQueueEmbed = baseEmbed().setTitle("Fila vazia");
 
 /**
  * Creates an embed that shows a page of the queue.
  *
  * @param queue The queue
- * @param page Which page to show
  * @returns The queue embed
  */
-function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
+export function queueEmbed(queue: PagedQueue): MessageEmbed {
     let tracks = queue.tracks;
     const duration = tracks.reduce((d, t) => d + t.durationMS, 0) / 1000;
     const length = tracks.length;
+    const page = queue.metadata ?? 0;
     tracks = tracks.slice(page * songsPerPage, (page + 1) * songsPerPage);
     const pages = queuePages(queue);
 
     return baseEmbed()
         .setTitle(
-            `${
-                queue.repeatMode == QueueRepeatMode.QUEUE ? loop + " " : ""
-            }Fila — ${length} música${length > 1 ? "s" : ""} — ${formatTime(
+            `Fila — ${length} música${length > 1 ? "s" : ""} — ${formatTime(
                 duration
             )}`
         )
@@ -103,22 +85,6 @@ function notEmptyQueueEmbed(queue: Queue, page: number): MessageEmbed {
             }))
         )
         .setFooter(`Página ${page + 1}/${pages}`);
-}
-
-/**
- * Creates an embed that shows a page of the queue if it is not empty.
- *
- * @param queue The queue
- * @param page Which page to show
- * @returns The queue embed
- */
-export function queueEmbed(
-    queue: Queue | undefined,
-    page: number
-): MessageEmbed {
-    return queue && queue.tracks.length > 1
-        ? notEmptyQueueEmbed(queue, page)
-        : emptyQueueEmbed;
 }
 
 /**

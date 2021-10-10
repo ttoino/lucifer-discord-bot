@@ -1,4 +1,4 @@
-import { Queue } from "discord-player";
+import { Player, Queue } from "discord-player";
 import { MessageReaction } from "discord.js";
 import { songsPerPage } from "./constants";
 
@@ -74,3 +74,17 @@ declare global {
 Number.prototype.pad = function (length) {
     return this.toString().padStart(length, "0");
 };
+
+// TYPES
+
+export type AsyncReturnType<T extends (...args: any) => any> = T extends (
+    ...args: any
+) => Promise<infer U>
+    ? U
+    : T extends (...args: any) => infer U
+    ? U
+    : any;
+
+export type SearchResults = AsyncReturnType<Player["search"]>;
+
+export type PagedQueue = Queue<number>;

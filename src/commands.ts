@@ -1,15 +1,77 @@
+import {
+    APIApplicationCommandOption,
+    ApplicationCommandOptionType,
+    RESTPostAPIApplicationCommandsJSONBody,
+} from "discord-api-types/v9";
 import fs from "fs";
-import Command from "./Command";
+import path from "path";
+import {
+    Command,
+    CommandWithOptions,
+    CommandWithSubCommands,
+    Options,
+    Subcommands,
+    toApplicationCommandOptionType,
+} from "./Command";
 
-const commands = fs
-    .readdirSync("./src/commands/")
-    .filter((file) => file.endsWith(".ts"))
-    .map((file) => require(`./commands/${file}`).default) as Command[];
+const commands = Object.fromEntries(
+    fs
+        .readdirSync("./src/commands/")
+        .filter((file) => file.endsWith(".ts"))
+        .map((file) => [
+            path.parse(file).name,
+            require(`./commands/${file}`).default as Command &
+                Partial<CommandWithOptions<Options>> &
+                Partial<CommandWithSubCommands<Subcommands>>,
+        ])
+);
 
 export default commands;
 
-export const commandMap = new Map(
-    commands.map((command) => [command.builder.name, command])
-);
+const parseOptions = (options: Options): APIApplicationCommandOption[] => {
+    const r: APIApplicationCommandOption[] = [];
 
-export const json = commands.map((command) => command.builder.toJSON!());
+    for (const option in options) {
+        const { description, type, optional } = options[option];
+        r.push({
+            name: option,
+            description,
+            type: toApplicationCommandOptionType(type),
+            required: !optional,
+        });
+    }
+
+    return r;
+};
+
+export const json = (() => {
+    const r: RESTPostAPIApplicationCommandsJSONBody[] = [];
+
+    for (const name in commands) {
+        const command = commands[name];
+
+        let opt: APIApplicationCommandOption[] = [];
+
+        if (command.options) opt = parseOptions(command.options);
+
+        if (command.subcommands)
+            for (const subcommand in command.subcommands) {
+                const { description, options } =
+                    command.subcommands[subcommand];
+                opt.push({
+                    name: subcommand,
+                    description,
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: options ? parseOptions(options) : [],
+                });
+            }
+
+        r.push({
+            name,
+            description: command.description,
+            options: opt,
+        });
+    }
+
+    return r;
+})();
