@@ -37,7 +37,7 @@ client.on("messageCreate", (message) => {
     onMessageCreate(message);
 });
 
-// TODO: Admin commands, maybe argument parsing?
+// TODO: Admin commands
 client.on("interactionCreate", (interaction) => {
     if (interaction.isCommand()) {
         const command = commands[interaction.commandName];

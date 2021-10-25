@@ -1,5 +1,5 @@
 import { Collection } from "@discordjs/collection";
-import { Snowflake } from "discord-api-types";
+import { Snowflake } from "discord-api-types/v9";
 import { Player, QueueRepeatMode, Track } from "discord-player";
 import {
     Client,
@@ -124,11 +124,11 @@ export function initPlayer(client: Client) {
         // Triggers when the bot is left alone in a voice channel
         // Seems inconsistent
         .on("channelEmpty", onChannelEmpty)
-        // TODO
+        // TODO: Document this
         .on("connectionCreate", onConnectionCreate)
-        // TODO
+        // TODO: Document this
         .on("connectionError", onConnectionError)
-        // TODO
+        // TODO: Document this
         .on("debug", onDebug)
         // General errors, ignoring for now
         .on("error", onError)
@@ -136,11 +136,11 @@ export function initPlayer(client: Client) {
         .on("queueEnd", onQueueEnd)
         // When a single track is added
         .on("trackAdd", onTrackAdd)
-        // TODO
+        // TODO: Document this
         .on("tracksAdd", onTracksAdd)
         // Every time a track starts
         .on("trackStart", onTrackStart)
-        // TODO
+        // TODO: Document this
         .on("trackEnd", onTrackEnd);
 }
 
