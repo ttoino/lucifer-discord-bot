@@ -1,3 +1,5 @@
+import ytdl from "ytdl-core";
+
 export const numberEmoji = [
     "1️⃣",
     "2️⃣",
@@ -29,3 +31,10 @@ export const botColor = "#F03A17";
 export const songsPerPage = 10;
 
 export const botPrefix = process.env.BOT_PREFIX || "!";
+
+export const ytdlOptions: ytdl.downloadOptions = {
+    quality: "highest",
+    filter: "audioonly",
+    highWaterMark: 1 << 25,
+    dlChunkSize: 0,
+};

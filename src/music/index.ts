@@ -11,6 +11,7 @@ import {
     MessageEmbed,
     TextChannel,
 } from "discord.js";
+import { ytdlOptions } from "../constants";
 // import { client } from "..";
 import { PagedQueue, queuePages, SearchResults } from "../util";
 import {
@@ -81,7 +82,7 @@ export function getMessagePayload(guild: Guild) {
     const embeds: MessageEmbed[] = [];
     const components: MessageActionRow[] = [];
 
-    const queue: PagedQueue = player.createQueue(guild);
+    const queue: PagedQueue = getQueue(guild);
 
     if (queue.metadata && queue.metadata >= queuePages(queue))
         queue.metadata = queuePages(queue) - 1;
@@ -144,13 +145,16 @@ export function initPlayer(client: Client) {
         .on("trackEnd", onTrackEnd);
 }
 
+export const getQueue: Player["createQueue"] = (guild, options?) =>
+    player.createQueue(guild, { ytdlOptions, ...options });
+
 // GENERAL METHODS
 
 export async function play(
     member: GuildMember,
     results: Track | SearchResults
 ) {
-    const queue = player.createQueue(member.guild);
+    const queue = getQueue(member.guild);
 
     if (!queue.connection) await queue.connect(member.voice.channel!);
 
@@ -191,75 +195,75 @@ export async function select(
 }
 
 export function pause(guild: Guild) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     queue.setPaused(true);
     updateMessage(guild);
 }
 
 export function resume(guild: Guild) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     queue.setPaused(false);
     updateMessage(guild);
 }
 
 export function stop(guild: Guild) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     queue.stop();
     updateMessage(guild);
 }
 
 export function previousSong(guild: GuildResolvable) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     return queue.back();
 }
 
 export function nextSong(guild: GuildResolvable) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     return queue.skip();
 }
 
 export function firstPage(guild: Guild) {
-    const queue: PagedQueue = player.createQueue(guild);
+    const queue: PagedQueue = getQueue(guild);
 
     queue.metadata = 0;
     updateMessage(guild);
 }
 
 export function lastPage(guild: Guild) {
-    const queue: PagedQueue = player.createQueue(guild);
+    const queue: PagedQueue = getQueue(guild);
 
     queue.metadata = queuePages(queue) - 1;
     updateMessage(guild);
 }
 
 export function previousPage(guild: Guild) {
-    const queue: PagedQueue = player.createQueue(guild);
+    const queue: PagedQueue = getQueue(guild);
 
     queue.metadata = Math.max((queue.metadata ?? 0) - 1, 0);
     updateMessage(guild);
 }
 
 export function nextPage(guild: Guild) {
-    const queue: PagedQueue = player.createQueue(guild);
+    const queue: PagedQueue = getQueue(guild);
 
     queue.metadata = Math.min((queue.metadata ?? 0) + 1, queuePages(queue) - 1);
     updateMessage(guild);
 }
 
 export function shuffle(guild: Guild) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     queue.shuffle();
     updateMessage(guild);
 }
 
 export function setRepeatMode(guild: Guild, repeatMode: QueueRepeatMode) {
-    const queue = player.createQueue(guild);
+    const queue = getQueue(guild);
 
     queue.setRepeatMode(repeatMode);
 }
