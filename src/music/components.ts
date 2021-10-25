@@ -1,5 +1,5 @@
 import {} from "@discordjs/builders";
-import { QueueRepeatMode } from "discord-player";
+import { QueueRepeatMode, Track } from "discord-player";
 import { MessageActionRow, MessageButton, MessageSelectMenu } from "discord.js";
 import { SearchResults } from "../util";
 
@@ -95,12 +95,27 @@ export const repeatModeMenu = (mode: QueueRepeatMode) =>
     );
 
 export const searchMenu = (results: SearchResults) =>
-    new MessageSelectMenu().setCustomId("search").addOptions(
-        results.tracks.map((track, i) => ({
-            value: track.url,
-            label: `${track.title}`,
-        }))
-    );
+    new MessageSelectMenu()
+        .setCustomId("search")
+        .setPlaceholder("Select track")
+        .addOptions(
+            results.tracks.map((track) => ({
+                value: track.url,
+                label: `${track.title}`,
+            }))
+        );
+
+export const removeMenu = (tracks: Track[]) =>
+    new MessageSelectMenu()
+        .setCustomId("remove")
+        .setPlaceholder("Select tracks")
+        .setMaxValues(25)
+        .addOptions(
+            tracks.slice(0, 25).map((track) => ({
+                value: track.id,
+                label: `${track.title}`,
+            }))
+        );
 
 export const playRow = (
     paused: boolean,
@@ -127,3 +142,6 @@ export const repeatModeMenuRow = (mode: QueueRepeatMode) =>
 
 export const searchMenuRow = (results: SearchResults) =>
     new MessageActionRow().addComponents(searchMenu(results));
+
+export const removeMenuRow = (tracks: Track[]) =>
+    new MessageActionRow().addComponents(removeMenu(tracks));

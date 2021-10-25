@@ -14,13 +14,8 @@ import {
 import { ytdlOptions } from "../constants";
 // import { client } from "..";
 import { PagedQueue, queuePages, SearchResults } from "../util";
-import {
-    playRow,
-    queueRow,
-    repeatModeMenuRow,
-    searchMenuRow,
-} from "./components";
-import { playEmbed, queueEmbed, searchEmbed } from "./embeds";
+import { playRow, queueRow, repeatModeMenuRow } from "./components";
+import { playEmbed, queueEmbed } from "./embeds";
 import {
     onBotDisconnect,
     onChannelEmpty,
@@ -173,15 +168,6 @@ export async function play(
     queue.play(results);
 }
 
-export function search(message: Snowflake, results: SearchResults) {
-    // searches.set(message, results);
-
-    return {
-        embeds: [searchEmbed(results.tracks)],
-        components: [searchMenuRow(results)],
-    };
-}
-
 export async function select(
     member: GuildMember,
     message: Snowflake,
@@ -266,4 +252,11 @@ export function setRepeatMode(guild: Guild, repeatMode: QueueRepeatMode) {
     const queue = getQueue(guild);
 
     queue.setRepeatMode(repeatMode);
+}
+
+export function remove(guild: Guild, tracks: string[]) {
+    const queue = getQueue(guild);
+
+    for (const track of tracks) queue.remove(track);
+    updateMessage(guild);
 }

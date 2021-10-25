@@ -52,8 +52,6 @@ export interface Option {
     description: string;
     optional?: typeof optional;
     type: OptionType;
-
-    integer?: this extends { type: typeof Number } ? typeof integer : undefined;
 }
 
 export type Options = {
@@ -70,7 +68,9 @@ type OptionValueType<O extends OptionType> = O extends typeof Boolean
     ? Role
     : O extends typeof String
     ? string
-    : number;
+    : O extends typeof Number
+    ? number
+    : undefined;
 
 export type OptionsArg<O extends Options> = {
     [name in keyof O]: O[name] extends { optional: true }
@@ -78,7 +78,7 @@ export type OptionsArg<O extends Options> = {
         : OptionValueType<O[name]["type"]>;
 };
 
-// TODO: Channel types
+// TODO: Channel types, integer
 export type OptionType =
     | typeof Boolean
     | typeof User

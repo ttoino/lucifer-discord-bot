@@ -2,7 +2,7 @@ import { GuildMember, SelectMenuInteraction } from "discord.js";
 import { play, player } from "../music";
 
 export default async function (interaction: SelectMenuInteraction) {
-    await interaction.deferReply({ ephemeral: true });
+    interaction.deferUpdate();
 
     if (!(interaction.member instanceof GuildMember))
         return interaction.editReply("Something's wrong");
@@ -13,5 +13,9 @@ export default async function (interaction: SelectMenuInteraction) {
 
     play(interaction.member, results);
 
-    interaction.editReply("Hi");
+    interaction.editReply({
+        content: `Track **${results.tracks[0].title}** added to queue!`,
+        components: [],
+        embeds: [],
+    });
 }

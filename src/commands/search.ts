@@ -2,7 +2,9 @@ import { QueryType } from "discord-player";
 // import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildMember } from "discord.js";
 import { CommandWithSubCommands } from "../Command";
-import { player, search as searchFor } from "../music";
+import { player } from "../music";
+import { searchMenuRow } from "../music/components";
+import { searchEmbed } from "../music/embeds";
 
 const options = {
     query: {
@@ -39,9 +41,10 @@ const search: CommandWithSubCommands<typeof subcommands> = {
                     : QueryType.AUTO,
         });
 
-        return interaction.editReply(
-            searchFor(/*(await interaction.fetchReply()).id*/ "", result)
-        );
+        return interaction.editReply({
+            embeds: [searchEmbed(result.tracks)],
+            components: [searchMenuRow(result)],
+        });
     },
 };
 
