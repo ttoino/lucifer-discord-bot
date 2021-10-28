@@ -34,10 +34,11 @@ export interface CommandWithSubCommands<S extends Subcommands>
     subcommands: S;
 }
 
-export type SubCommand<O extends Options> = Omit<
-    CommandWithOptions<O>,
-    "call" | "admin"
->;
+// TODO: Subcommands without options, subcommand groups
+export interface SubCommand<O extends Options> {
+    description: string;
+    options: O;
+}
 
 export type Subcommands = {
     [name: string]: SubCommand<Options>;
@@ -58,17 +59,19 @@ export type Options = {
     [name: string]: Option;
 };
 
-type OptionValueType<O extends OptionType> = O extends typeof Boolean
+type OptionValueType<O extends OptionType> = O extends "boolean"
     ? boolean
-    : O extends typeof User
+    : O extends "User"
     ? User
-    : O extends typeof Channel
+    : O extends "Channel"
     ? Channel
-    : O extends typeof Role
+    : O extends "Role"
     ? Role
-    : O extends typeof String
+    : O extends "string"
     ? string
-    : O extends typeof Number
+    : O extends "float"
+    ? number
+    : O extends "int"
     ? number
     : undefined;
 
@@ -80,32 +83,22 @@ export type OptionsArg<O extends Options> = {
 
 // TODO: Channel types, integer
 export type OptionType =
-    | typeof Boolean
-    | typeof User
-    | typeof Channel
-    | typeof Role
-    | typeof String
-    | typeof Number;
+    | "boolean"
+    | "User"
+    | "Channel"
+    | "Role"
+    | "string"
+    | "float"
+    | "int";
 
-export const toApplicationCommandOptionType = (
-    type: OptionType
-): ApplicationCommandOptionType => {
-    switch (type) {
-        case Boolean:
-            return ApplicationCommandOptionType.Boolean;
-        case User:
-            return ApplicationCommandOptionType.User;
-        case Channel:
-            return ApplicationCommandOptionType.Channel;
-        case Role:
-            return ApplicationCommandOptionType.Role;
-        case String:
-            return ApplicationCommandOptionType.String;
-        case Number:
-            return ApplicationCommandOptionType.Number;
-        default:
-            return ApplicationCommandOptionType.Mentionable;
-    }
+export const optionTypeMap: Record<OptionType, ApplicationCommandOptionType> = {
+    boolean: ApplicationCommandOptionType.Boolean,
+    User: ApplicationCommandOptionType.User,
+    Channel: ApplicationCommandOptionType.Channel,
+    Role: ApplicationCommandOptionType.Role,
+    string: ApplicationCommandOptionType.String,
+    float: ApplicationCommandOptionType.Number,
+    int: ApplicationCommandOptionType.Integer,
 };
 
 export const admin = true;

@@ -2,10 +2,6 @@ import { Command } from "../Command";
 import { resume as resumePlayer } from "../music";
 
 const resume: Command = {
-    // json: new SlashCommandBuilder()
-    //     .setName("resume")
-    //     .setDescription("Resume current track")
-    //     .toJSON(),
     description: "Resume current track",
     call: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });

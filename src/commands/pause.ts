@@ -2,10 +2,6 @@ import { Command } from "../Command";
 import { pause as pausePlayer } from "../music";
 
 const pause: Command = {
-    // json: new SlashCommandBuilder()
-    //     .setName("pause")
-    //     .setDescription("Pause current track")
-    //     .toJSON(),
     description: "Pause current track",
     call: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });

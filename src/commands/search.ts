@@ -1,5 +1,4 @@
 import { QueryType } from "discord-player";
-// import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildMember } from "discord.js";
 import { CommandWithSubCommands } from "../Command";
 import { player } from "../music";
@@ -9,7 +8,7 @@ import { searchEmbed } from "../music/embeds";
 const options = {
     query: {
         description: "What to search for",
-        type: String,
+        type: "string",
     },
 } as const;
 

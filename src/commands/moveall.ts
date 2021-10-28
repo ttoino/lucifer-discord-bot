@@ -1,11 +1,11 @@
 import { admin, CommandWithOptions } from "../Command";
 // import { SlashCommandBuilder } from "@discordjs/builders";
-import { Channel, GuildMember, VoiceChannel } from "discord.js";
+import { GuildMember, VoiceChannel } from "discord.js";
 
 const options = {
     channel: {
         description: "O canal para o qual mover",
-        type: Channel,
+        type: "Channel",
     },
 } as const;
 

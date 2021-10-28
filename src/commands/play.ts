@@ -9,7 +9,7 @@ const subcommands = {
         options: {
             query: {
                 description: "A link, or what to search for",
-                type: String,
+                type: "string",
             },
         },
     },
@@ -18,39 +18,13 @@ const subcommands = {
         options: {
             query: {
                 description: "What to search for",
-                type: String,
+                type: "string",
             },
         },
     },
 } as const;
 
 const play: CommandWithSubCommands<typeof subcommands> = {
-    // json: new SlashCommandBuilder()
-    //     .setName("play")
-    //     .setDescription("Play a track")
-    //     .addSubcommand((builder) =>
-    //         builder
-    //             .setName("auto")
-    //             .setDescription("Play a track from Youtube or a link")
-    //             .addStringOption((option) =>
-    //                 option
-    //                     .setName("query")
-    //                     .setDescription("Link, or what to search for")
-    //                     .setRequired(true)
-    //             )
-    //     )
-    //     .addSubcommand((builder) =>
-    //         builder
-    //             .setName("soundcloud")
-    //             .setDescription("Play a track from Soundcloud")
-    //             .addStringOption((option) =>
-    //                 option
-    //                     .setName("query")
-    //                     .setDescription("What to search for")
-    //                     .setRequired(true)
-    //             )
-    //     )
-    //     .toJSON(),
     subcommands,
     description: "Play a track",
     call: async (interaction, subcommand, { query }) => {

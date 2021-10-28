@@ -10,8 +10,8 @@ import {
     CommandWithOptions,
     CommandWithSubCommands,
     Options,
+    optionTypeMap,
     Subcommands,
-    toApplicationCommandOptionType,
 } from "./Command";
 
 const commands = Object.fromEntries(
@@ -36,7 +36,7 @@ const parseOptions = (options: Options): APIApplicationCommandOption[] => {
         r.push({
             name: option,
             description,
-            type: toApplicationCommandOptionType(type),
+            type: optionTypeMap[type],
             required: !optional,
         });
     }
